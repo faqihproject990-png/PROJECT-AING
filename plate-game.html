@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Game</title>
+<style>
+  :root {
+    --pink: #ffd6ec;
+    --light-pink: #ffe8f5;
+    --text: #4a2b3d;
+  }
+
+  * {
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+  }
+
+  body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: var(--pink);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  header {
+    text-align: center;
+    padding: 100px 20px 10px; /* judul lebih turun */
+  }
+
+  header h1 {
+    font-size: 1.8rem; /* judul lebih kecil */
+    margin: 0;
+    font-weight: 700;
+    color: black;
+  }
+
+  header p {
+    font-size: 1rem;
+    color: #5b3c52;
+    margin-top: 8px;
+  }
+
+  /* Kontainer utama */
+  .game-container {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 60px;
+    padding: 40px 20px 80px;
+    flex-wrap: nowrap;
+  }
+
+  .game-card {
+    width: 180px;
+    text-align: center;
+  }
+
+  .game-card img {
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    border: 5px solid white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+
+  .game-card img:hover {
+    transform: scale(1.07);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+  }
+
+  .game-info {
+    margin-top: 10px;
+  }
+
+  .game-info h2 {
+    font-size: 1rem;
+    color: #3a1d2e;
+    margin: 6px 0;
+  }
+
+  .play-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, black, #ffb6d9);
+    color: white;
+    font-weight: 600;
+    border: none;
+    padding: 5px 14px; /* tombol lebih kecil */
+    border-radius: 20px;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 5px 12px rgba(255,143,199,0.3);
+    margin-top: 6px;
+    font-size: 0.8rem; /* teks tombol kecil */
+  }
+
+  .play-btn:hover {
+    background: linear-gradient(135deg, #333, #ff99cc);
+  }
+
+  footer {
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.5);
+    color: #6b4b6f;
+    font-size: 0.9rem;
+  }
+
+  /* Tombol back */
+  .back-button {
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: black;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    z-index: 1000;
+  }
+
+  .back-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(-5px);
+  }
+
+  .back-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 768px) {
+    .game-container {
+      flex-wrap: wrap;
+      gap: 30px;
+    }
+    .game-card img {
+      width: 110px;
+      height: 110px;
+    }
+    .game-card {
+      width: 45%;
+    }
+  }
+
+  @media (max-width: 500px) {
+    .game-container {
+      flex-direction: column;
+      align-items: center;
+      gap: 25px;
+    }
+    .game-card img {
+      width: 100px;
+      height: 100px;
+    }
+  }
+
+</style>
+</head>
+<body>
+  <!-- Tombol Back -->
+  <a href="utama.html" onclick="window.history.back(); return false;" class="back-button">
+      <svg class="back-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+      </svg>
+      <span>Back</span>
+  </a>
+
+<header>
+  <h1>Birthday Game</h1>
+  <p>Pilih game favoritmu dan nikmati keseruannya!</p>
+</header>
+
+<main class="game-container">
+  <div class="game-card">
+    <img src="static/assets/cake.png" alt="Cake Game">
+    <div class="game-info">
+      <h2>Cake Catcher</h2>
+      <a href="game.html" class="play-btn">Main Sekarang</a>
+    </div>
+  </div>
+
+  <div class="game-card">
+    <img src="static/assets/wish.png" alt="Wish Game">
+    <div class="game-info">
+      <h2>Wish Lantern</h2>
+      <a href="game1.html" class="play-btn">Main Sekarang</a>
+    </div>
+  </div>
+
+  <div class="game-card">
+    <img src="static/assets/elegant.png" alt="Memory Game">
+    <div class="game-info">
+      <h2>Elegant Memory</h2>
+      <a href="game2.html" class="play-btn">Main Sekarang</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  Game by Pia
+</footer>
+</body>
+</html>

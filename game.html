@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Cake Catcher</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #ffd6ec 0%, #ffb3d9 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            height: 90vh;
+            max-height: 600px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        #gameCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .game-info {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            padding: 0 20px;
+            color: #420d29;;
+            font-weight: bold;
+            font-size: 1.2em;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+            z-index: 10;
+        }
+
+        .start-screen, .game-over-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 214, 236, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .game-over-screen {
+            display: none;
+        }
+
+        h1 {
+            color: #420d29;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        p {
+            color: #420d29;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ff69b4, #420d29 );
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.3em;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 20, 147, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(255, 20, 147, 0.6);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .final-score {
+            font-size: 2em;
+            color: #420d29;;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            p {
+                font-size: 1em;
+            }
+            
+            button {
+                font-size: 1.1em;
+                padding: 12px 30px;
+            }
+            
+            .game-info {
+                font-size: 1em;
+            }
+
+            .container {
+                height: 95vh;
+                border-radius: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .game-info {
+                font-size: 0.9em;
+                top: 10px;
+            }
+        }
+        .back-button {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: black;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-5px);
+        }
+
+        .back-button:active {
+            transform: translateX(-3px);
+        }
+
+        .back-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .back-button {
+                top: 20px;
+                left: 20px;
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+
+            .back-icon {
+                width: 18px;
+                height: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+     <!-- Tombol Back -->
+    <a href="utama.html" onclick="window.history.back(); return false;" class="back-button">
+        <svg class="back-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        <span>Back</span>
+    </a>
+    <div class="container">
+        <canvas id="gameCanvas"></canvas>
+        
+        <div class="game-info">
+            <div>🎂 Skor: <span id="score">0</span></div>
+            <div>❤️ Nyawa: <span id="lives">3</span></div>
+        </div>
+
+        <div class="start-screen" id="startScreen">
+            <h1>🎉 Birthday Cake Catcher 🎉</h1>
+            <p>Tangkap sebanyak mungkin kue ulang tahun!<br>Hindari bom yang jatuh!</p>
+            <button onclick="startGame()">Mulai Main</button>
+        </div>
+
+        <div class="game-over-screen" id="gameOverScreen">
+            <h1>🎂 Game Over! 🎂</h1>
+            <div class="final-score">Skor Akhir: <span id="finalScore">0</span></div>
+            <button onclick="restartGame()">Main Lagi</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let gameState = {
+            score: 0,
+            lives: 3,
+            isPlaying: false,
+            basketX: 0,
+            basketY: 0,
+            basketWidth: 80,
+            basketHeight: 60,
+            items: [],
+            animationId: null
+        };
+
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            gameState.basketX = canvas.width / 2 - gameState.basketWidth / 2;
+            gameState.basketY = canvas.height - gameState.basketHeight - 20;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function drawBasket() {
+            ctx.fillStyle = '#420d29';
+            ctx.fillRect(gameState.basketX, gameState.basketY, gameState.basketWidth, 10);
+            ctx.fillRect(gameState.basketX, gameState.basketY, 10, gameState.basketHeight);
+            ctx.fillRect(gameState.basketX + gameState.basketWidth - 10, gameState.basketY, 10, gameState.basketHeight);
+            ctx.fillRect(gameState.basketX, gameState.basketY + gameState.basketHeight - 10, gameState.basketWidth, 10);
+        }
+
+        function drawCake(x, y, size) {
+            ctx.fillStyle = '#ffb3d9';
+            ctx.fillRect(x - size/2, y - size/2, size, size * 0.6);
+            ctx.fillStyle = '#ff69b4';
+            ctx.fillRect(x - size/2 + 5, y - size/2 - size * 0.3, size - 10, size * 0.3);
+            ctx.fillStyle = '#ffd700';
+            ctx.fillRect(x - 2, y - size/2 - size * 0.5, 4, size * 0.25);
+            ctx.fillStyle = '#ff6347';
+            ctx.beginPath();
+            ctx.arc(x, y - size/2 - size * 0.45, 4, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawBomb(x, y, size) {
+            ctx.fillStyle = '#333';
+            ctx.beginPath();
+            ctx.arc(x, y, size/2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#ff0000';
+            ctx.fillRect(x - 2, y - size/2 - 10, 4, 10);
+            ctx.fillStyle = '#ff6347';
+            ctx.beginPath();
+            ctx.arc(x, y - size/2 - 10, 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function createItem() {
+            const isBomb = Math.random() < 0.2;
+            gameState.items.push({
+                x: Math.random() * (canvas.width - 40) + 20,
+                y: -30,
+                size: 30,
+                speed: 2 + Math.random() * 2,
+                isBomb: isBomb
+            });
+        }
+
+        function updateGame() {
+            if (!gameState.isPlaying) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            drawBasket();
+
+            for (let i = gameState.items.length - 1; i >= 0; i--) {
+                const item = gameState.items[i];
+                item.y += item.speed;
+
+                if (item.isBomb) {
+                    drawBomb(item.x, item.y, item.size);
+                } else {
+                    drawCake(item.x, item.y, item.size);
+                }
+
+                if (item.y + item.size/2 >= gameState.basketY && 
+                    item.y - item.size/2 <= gameState.basketY + gameState.basketHeight &&
+                    item.x >= gameState.basketX && 
+                    item.x <= gameState.basketX + gameState.basketWidth) {
+                    
+                    if (item.isBomb) {
+                        gameState.lives--;
+                        updateLives();
+                    } else {
+                        gameState.score += 10;
+                        updateScore();
+                    }
+                    gameState.items.splice(i, 1);
+                } else if (item.y > canvas.height) {
+                    if (!item.isBomb) {
+                        gameState.lives--;
+                        updateLives();
+                    }
+                    gameState.items.splice(i, 1);
+                }
+            }
+
+            if (gameState.lives <= 0) {
+                endGame();
+                return;
+            }
+
+            if (Math.random() < 0.02) {
+                createItem();
+            }
+
+            gameState.animationId = requestAnimationFrame(updateGame);
+        }
+
+        function startGame() {
+            document.getElementById('startScreen').style.display = 'none';
+            gameState.score = 0;
+            gameState.lives = 3;
+            gameState.items = [];
+            gameState.isPlaying = true;
+            updateScore();
+            updateLives();
+            updateGame();
+        }
+
+        function endGame() {
+            gameState.isPlaying = false;
+            cancelAnimationFrame(gameState.animationId);
+            document.getElementById('finalScore').textContent = gameState.score;
+            document.getElementById('gameOverScreen').style.display = 'flex';
+        }
+
+        function restartGame() {
+            document.getElementById('gameOverScreen').style.display = 'none';
+            startGame();
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = gameState.score;
+        }
+
+        function updateLives() {
+            document.getElementById('lives').textContent = gameState.lives;
+        }
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!gameState.isPlaying) return;
+            const rect = canvas.getBoundingClientRect();
+            gameState.basketX = e.clientX - rect.left - gameState.basketWidth / 2;
+            gameState.basketX = Math.max(0, Math.min(canvas.width - gameState.basketWidth, gameState.basketX));
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            if (!gameState.isPlaying) return;
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            gameState.basketX = touch.clientX - rect.left - gameState.basketWidth / 2;
+            gameState.basketX = Math.max(0, Math.min(canvas.width - gameState.basketWidth, gameState.basketX));
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wish Lantern</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(180deg, #2d1b2e 0%, #4a2d4d 30%, #6b4968 60%, #ffd6ec 100%);
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeIn 1s ease-in;
+        }
+
+        h1 {
+            color: #ffd6ec;
+            font-size: 3em;
+            font-weight: 300;
+            letter-spacing: 8px;
+            text-shadow: 0 0 20px rgba(255, 214, 236, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #e8c5d9;
+            font-size: 1.1em;
+            letter-spacing: 3px;
+            opacity: 0.8;
+        }
+
+        .game-area {
+            width: 100%;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 214, 236, 0.2);
+            animation: slideUp 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .wish-input-area {
+            margin-bottom: 30px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 214, 236, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            color: #ffd6ec;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            resize: none;
+            transition: all 0.3s ease;
+        }
+
+        textarea::placeholder {
+            color: rgba(255, 214, 236, 0.5);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #ffd6ec;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 30px rgba(255, 214, 236, 0.2);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        button {
+            background: linear-gradient(135deg, rgba(255, 214, 236, 0.3), rgba(212, 165, 194, 0.3));
+            color: #ffd6ec;
+            border: 2px solid rgba(255, 214, 236, 0.5);
+            padding: 15px 35px;
+            font-size: 1em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            backdrop-filter: blur(10px);
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, rgba(255, 214, 236, 0.5), rgba(212, 165, 194, 0.5));
+            border-color: #ffd6ec;
+            box-shadow: 0 0 30px rgba(255, 214, 236, 0.3);
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .lanterns-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .lantern {
+            position: absolute;
+            width: 60px;
+            height: 80px;
+            animation: float-up 8s ease-in forwards;
+            cursor: pointer;
+            pointer-events: all;
+        }
+
+        .lantern-body {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 214, 236, 0.8), rgba(255, 179, 217, 0.8));
+            border-radius: 10px 10px 20px 20px;
+            box-shadow: 0 0 30px rgba(255, 214, 236, 0.6),
+                        inset 0 -20px 40px rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            transition: all 0.3s ease;
+        }
+
+        .lantern:hover .lantern-body {
+            transform: scale(1.1);
+            box-shadow: 0 0 50px rgba(255, 214, 236, 0.9);
+        }
+
+        .lantern-string {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            width: 2px;
+            height: 20px;
+            background: rgba(255, 214, 236, 0.5);
+        }
+
+        .lantern-wish {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            white-space: nowrap;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #6b4968;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .lantern:hover .lantern-wish {
+            opacity: 1;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(var(--drift));
+                opacity: 0;
+            }
+        }
+
+        .stats {
+            text-align: center;
+            color: #ffd6ec;
+            font-size: 1.1em;
+            letter-spacing: 2px;
+        }
+
+        .stats-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ffd6ec;
+            text-shadow: 0 0 20px rgba(255, 214, 236, 0.8);
+        }
+
+        .instruction {
+            text-align: center;
+            color: rgba(255, 214, 236, 0.7);
+            font-size: 0.9em;
+            margin-top: 20px;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+                letter-spacing: 4px;
+            }
+
+            .subtitle {
+                font-size: 0.9em;
+            }
+
+            .game-area {
+                padding: 25px;
+            }
+
+            button {
+                padding: 12px 25px;
+                font-size: 0.9em;
+            }
+
+            .lantern {
+                width: 50px;
+                height: 70px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5em;
+                letter-spacing: 2px;
+            }
+
+            .game-area {
+                padding: 20px;
+            }
+
+            textarea {
+                height: 100px;
+                font-size: 0.9em;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+
+        .back-button {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-5px);
+        }
+
+        .back-button:active {
+            transform: translateX(-3px);
+        }
+
+        .back-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .back-button {
+                top: 20px;
+                left: 20px;
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+
+            .back-icon {
+                width: 18px;
+                height: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+     <!-- Tombol Back -->
+    <a href="utama.html" onclick="window.history.back(); return false;" class="back-button">
+        <svg class="back-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        <span>Back</span>
+    </a>
+    <div class="stars" id="stars"></div>
+    <div class="lanterns-container" id="lanternsContainer"></div>
+
+    <div class="container">
+        <header>
+            <h1>WISH LANTERN</h1>
+            <p class="subtitle">Release your birthday wishes to the universe</p>
+        </header>
+
+        <div class="game-area">
+            <div class="wish-input-area">
+                <textarea 
+                    id="wishInput" 
+                    placeholder="Write your birthday wish here...
+What do you hope for this year?
+What dreams do you want to manifest?"
+                    maxlength="150"
+                ></textarea>
+            </div>
+
+            <div class="controls">
+                <button onclick="releaseLantern()" id="releaseBtn">Release Wish</button>
+                <button onclick="clearWishes()">Clear All</button>
+            </div>
+
+            <div class="stats">
+                <div class="stats-number" id="wishCount">0</div>
+                <div>WISHES RELEASED</div>
+            </div>
+
+            <p class="instruction">✨ Hover over floating lanterns to read your wishes ✨</p>
+        </div>
+    </div>
+
+    <script>
+        let wishCount = 0;
+        const wishes = [];
+
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 70 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        function releaseLantern() {
+            const wishInput = document.getElementById('wishInput');
+            const wish = wishInput.value.trim();
+
+            if (!wish) {
+                wishInput.style.borderColor = 'rgba(255, 100, 100, 0.5)';
+                setTimeout(() => {
+                    wishInput.style.borderColor = 'rgba(255, 214, 236, 0.3)';
+                }, 500);
+                return;
+            }
+
+            wishes.push(wish);
+            wishCount++;
+            document.getElementById('wishCount').textContent = wishCount;
+
+            const lantern = document.createElement('div');
+            lantern.className = 'lantern';
+            
+            const icons = ['🎂', '🎁', '🎈', '🌟', '💫', '✨', '🎊', '🎉'];
+            const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+            
+            const startX = Math.random() * (window.innerWidth - 60);
+            const drift = (Math.random() - 0.5) * 200;
+            
+            lantern.style.left = startX + 'px';
+            lantern.style.bottom = '-100px';
+            lantern.style.setProperty('--drift', drift + 'px');
+            
+            lantern.innerHTML = `
+                <div class="lantern-string"></div>
+                <div class="lantern-body">
+                    ${randomIcon}
+                    <div class="lantern-wish">${wish}</div>
+                </div>
+            `;
+
+            document.getElementById('lanternsContainer').appendChild(lantern);
+
+            setTimeout(() => {
+                lantern.remove();
+            }, 8000);
+
+            wishInput.value = '';
+            wishInput.style.borderColor = 'rgba(100, 255, 100, 0.5)';
+            setTimeout(() => {
+                wishInput.style.borderColor = 'rgba(255, 214, 236, 0.3)';
+            }, 500);
+
+            createSparkles(startX + 30, window.innerHeight - 100);
+        }
+
+        function createSparkles(x, y) {
+            for (let i = 0; i < 10; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.style.position = 'fixed';
+                sparkle.style.left = x + 'px';
+                sparkle.style.top = y + 'px';
+                sparkle.style.width = '4px';
+                sparkle.style.height = '4px';
+                sparkle.style.background = '#ffd6ec';
+                sparkle.style.borderRadius = '50%';
+                sparkle.style.pointerEvents = 'none';
+                sparkle.style.zIndex = '100';
+                
+                const angle = (Math.PI * 2 * i) / 10;
+                const velocity = 2 + Math.random() * 2;
+                const vx = Math.cos(angle) * velocity;
+                const vy = Math.sin(angle) * velocity;
+                
+                document.body.appendChild(sparkle);
+                
+                let posX = 0;
+                let posY = 0;
+                let opacity = 1;
+                
+                const animate = () => {
+                    posX += vx;
+                    posY += vy;
+                    opacity -= 0.02;
+                    
+                    sparkle.style.transform = `translate(${posX}px, ${posY}px)`;
+                    sparkle.style.opacity = opacity;
+                    
+                    if (opacity > 0) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        sparkle.remove();
+                    }
+                };
+                
+                animate();
+            }
+        }
+
+        function clearWishes() {
+            const lanterns = document.querySelectorAll('.lantern');
+            lanterns.forEach(lantern => lantern.remove());
+            wishCount = 0;
+            wishes.length = 0;
+            document.getElementById('wishCount').textContent = '0';
+        }
+
+        document.getElementById('wishInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                releaseLantern();
+            }
+        });
+
+        createStars();
+    </script>
+</body>
+</html>
